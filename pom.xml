@@ -72,6 +72,13 @@
 
 
     <build>
+        <sourceDirectory>../home/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>../home/main/resources</directory>
+            </resource>
+        </resources>
+        <testSourceDirectory>../home/test/java</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
