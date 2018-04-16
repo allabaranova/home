@@ -105,11 +105,13 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public List<QuizQuestion> updateQuestions(List<QuizQuestion> quizQuestions) {
         List<QuizQuestion> updatedQuestions = Lists.newArrayList();
+        List<QuizQuestion> questionsToUpdate = Lists.newArrayList();
         for (QuizQuestion quizQuestion : quizQuestions) {
             QuizQuestion questionToUpdate = quizQuestionRepository.findOne(quizQuestion.getId());
             questionToUpdate.setQuestion(quizQuestion.getQuestion());
-            updatedQuestions.add(quizQuestionRepository.save(questionToUpdate));
+            questionsToUpdate.add(questionToUpdate);
         }
+        updatedQuestions.addAll(quizQuestionRepository.save(questionsToUpdate));
         return updatedQuestions;
     }
 
