@@ -5,24 +5,22 @@ import es.nitaur.repository.QuizQuestionRepository;
 import es.nitaur.repository.QuizRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.NoResultException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
+@Service
 public class QuizServiceImpl implements QuizService {
 
     private static final Logger logger = LoggerFactory.getLogger(QuizServiceImpl.class);
-
-    private QuizRepository quizRepository;
+    @Autowired
     private QuizQuestionRepository quizQuestionRepository;
-
-    public QuizServiceImpl(QuizRepository quizRepository, QuizQuestionRepository quizQuestionRepository) {
-        this.quizRepository = quizRepository;
-        this.quizQuestionRepository = quizQuestionRepository;
-    }
+    @Autowired
+    private QuizRepository quizRepository;
 
     @Override
     public Collection<Quiz> findAll() {
@@ -43,8 +41,23 @@ public class QuizServiceImpl implements QuizService {
                     "Cannot create new Quiz with supplied id. The id attribute must be null to create an entity.");
         }
 
+        prepareSections(quiz);
         final Quiz savedQuiz = quizRepository.save(quiz);
         return savedQuiz;
+    }
+
+    private void prepareSections(Quiz quiz) {
+        List<QuizSection> sections = quiz.getSections();
+        for (QuizSection section : sections) {
+            section.setQuiz(quiz);
+            prepareQuestion(section, section.getQuizQuestions());
+        }
+    }
+
+    private void prepareQuestion(QuizSection section, List<QuizQuestion> quizQuestions) {
+        for (QuizQuestion quizQuestion : quizQuestions) {
+            quizQuestion.setSection(section);
+        }
     }
 
     @Override
@@ -111,5 +124,4 @@ public class QuizServiceImpl implements QuizService {
         List<QuizQuestion> quizQuestions = quizQuestionRepository.findAllBySectionId(filterBySectionId);
         return quizQuestions;
     }
-
 }
