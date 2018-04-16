@@ -11,8 +11,6 @@ public interface QuizService {
 
     Quiz create(Quiz quiz);
 
-    Quiz update(Quiz quiz);
-
     void delete(Long id);
 
     QuizQuestion updateQuestion(Long id, QuizQuestion quiz);
@@ -20,8 +18,6 @@ public interface QuizService {
     QuizQuestion answerQuestion(Long id, List<QuizAnswer> quizAnswers);
 
     QuizQuestion getQuestion(Long id);
-
-    Collection<QuizQuestion> getAllQuestions();
 
     List<QuizQuestion> updateQuestions(List<QuizQuestion> quizQuestions);
 

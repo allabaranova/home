@@ -48,11 +48,6 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Quiz update(Quiz quiz) {
-        return quizRepository.save(quiz);
-    }
-
-    @Override
     public void delete(final Long id) {
         quizRepository.delete(id);
     }
@@ -97,12 +92,6 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public Collection<QuizQuestion> getAllQuestions() {
-        final Collection<QuizQuestion> qs = quizQuestionRepository.findAll();
-        return qs;
-    }
-
-    @Override
     public List<QuizQuestion> updateQuestions(List<QuizQuestion> quizQuestions) {
         List<QuizQuestion> questionsToUpdate = Lists.newArrayList();
         for (QuizQuestion quizQuestion : quizQuestions) {
@@ -116,18 +105,11 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public List<QuizQuestion> getQuestions(Long filterBySectionId) {
-        List<QuizQuestion> all = quizQuestionRepository.findAll();
-        if (filterBySectionId != null) {
-            Iterator<QuizQuestion> iterator = all.iterator();
-            while (iterator.hasNext()) {
-                QuizQuestion next = iterator.next();
-                Long sectionId = next.getSection().getId();
-                if (!filterBySectionId.equals(sectionId)) {
-                    iterator.remove();
-                }
-            }
+        if (filterBySectionId == null) {
+            return quizQuestionRepository.findAll();
         }
-        return all;
+        List<QuizQuestion> quizQuestions = quizQuestionRepository.findAllBySectionId(filterBySectionId);
+        return quizQuestions;
     }
 
 }
