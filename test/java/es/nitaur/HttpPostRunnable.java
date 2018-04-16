@@ -16,7 +16,7 @@ public class HttpPostRunnable implements Runnable {
     public static final String ANSWER_QUESTION_API_FIRST_QUESTION = "/api/quiz/answerQuestion/1";
     public static final String LOCALHOST = "localhost";
     public static final String HTTP = "http";
-    public static final Integer UPDATE_COUNT = 10;
+    public static final Long UPDATE_COUNT = 10L;
 
     private final int port;
     private final int idx;
