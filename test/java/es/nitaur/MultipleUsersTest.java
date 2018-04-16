@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static es.nitaur.HttpPostRunnable.UPDATE_COUNT;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -31,7 +32,7 @@ public class MultipleUsersTest {
     public void answerQuestions() throws Exception {
         ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < UPDATE_COUNT; i++) {
             Runnable runnable = new HttpPostRunnable(port, i);
             executorService.submit(runnable);
         }
@@ -40,7 +41,7 @@ public class MultipleUsersTest {
         executorService.awaitTermination(60, TimeUnit.SECONDS);
 
         QuizQuestion question = restTemplate.getForObject(GET_QUESTION_API, QuizQuestion.class);
-        assertThat("There were 10 updates to the question", 10L, is(question.getUpdateCount()));
+        assertThat("There were 10 updates to the question", UPDATE_COUNT, is(question.getUpdateCount()));
     }
 
 }

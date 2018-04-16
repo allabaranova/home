@@ -24,6 +24,7 @@ public class AllQuestionsValidTest {
 
     public static final String UPDATE_QUESTION_API = "/api/quiz/updateQuestions";
     public static final String GET_ALL_QUESTIONS_API = "/api/quiz/allQuestions";
+    public static final String REDACTED = "<<redacted>>";
 
     @LocalServerPort
     int port;
@@ -32,46 +33,43 @@ public class AllQuestionsValidTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void questionsAreNotSavedWithEmptyQuestionText() throws Exception {
-        QuizQuestion quizQuestion1 = new QuizQuestion();
-        quizQuestion1.setId(1L);
-        quizQuestion1.setQuestion("<<redacted>>");
-
-        QuizQuestion quizQuestion2 = new QuizQuestion();
-        quizQuestion2.setId(2L);
-        quizQuestion2.setQuestion(null);
+    public void questionsAreNotSavedWithEmptyQuestionText() {
+        QuizQuestion quizQuestion1 = createQuizQuestion(1L, REDACTED);
+        QuizQuestion quizQuestion2 = createQuizQuestion(2L, null);
 
         List<QuizQuestion> questionsToUpdate = Lists.newArrayList(quizQuestion1, quizQuestion2);
 
         restTemplate.postForLocation(UPDATE_QUESTION_API, questionsToUpdate);
 
         ResponseEntity<List<QuizQuestion>> exchange = restTemplate.exchange(GET_ALL_QUESTIONS_API + "?filterSectionId=1", HttpMethod.GET, null, new ParameterizedTypeReference<List<QuizQuestion>>() {});
-        List<QuizQuestion> body = exchange.getBody();
+        List<QuizQuestion> quizQuestions = exchange.getBody();
 
-        for (QuizQuestion quizQuestion : body) {
-            assertThat("Question text should not be <<redacted>>", "<<redacted>>", not(quizQuestion.getQuestion()));
+        for (QuizQuestion quizQuestion : quizQuestions) {
+            assertThat("Question text should not be " + REDACTED, REDACTED, not(quizQuestion.getQuestion()));
         }
     }
 
     @Test
-    public void questionsAreSavedWithQuestionText() throws Exception {
-        QuizQuestion quizQuestion3 = new QuizQuestion();
-        quizQuestion3.setId(3L);
-        quizQuestion3.setQuestion("<<redacted>>");
-
-        QuizQuestion quizQuestion4 = new QuizQuestion();
-        quizQuestion4.setId(4L);
-        quizQuestion4.setQuestion("<<redacted>>");
+    public void questionsAreSavedWithQuestionText() {
+        QuizQuestion quizQuestion3 = createQuizQuestion(3L, REDACTED);
+        QuizQuestion quizQuestion4 = createQuizQuestion(4L, REDACTED);
 
         List<QuizQuestion> questionsToUpdate = Lists.newArrayList(quizQuestion3, quizQuestion4);
 
         restTemplate.postForLocation(UPDATE_QUESTION_API, questionsToUpdate);
 
         ResponseEntity<List<QuizQuestion>> exchange = restTemplate.exchange(GET_ALL_QUESTIONS_API + "?filterSectionId=2", HttpMethod.GET, null, new ParameterizedTypeReference<List<QuizQuestion>>() {});
-        List<QuizQuestion> body = exchange.getBody();
+        List<QuizQuestion> quizQuestions = exchange.getBody();
 
-        for (QuizQuestion quizQuestion : body) {
-            assertThat("Question text is only <<redacted>>", "<<redacted>>", is(quizQuestion.getQuestion()));
+        for (QuizQuestion quizQuestion : quizQuestions) {
+            assertThat("Question text is only " + REDACTED, REDACTED, is(quizQuestion.getQuestion()));
         }
+    }
+
+    private QuizQuestion createQuizQuestion(long id, String question) {
+        QuizQuestion quizQuestion = new QuizQuestion();
+        quizQuestion.setId(id);
+        quizQuestion.setQuestion(question);
+        return quizQuestion;
     }
 }

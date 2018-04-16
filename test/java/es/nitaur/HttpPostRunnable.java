@@ -6,7 +6,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ public class HttpPostRunnable implements Runnable {
     public static final String ANSWER_QUESTION_API_FIRST_QUESTION = "/api/quiz/answerQuestion/1";
     public static final String LOCALHOST = "localhost";
     public static final String HTTP = "http";
-    public static final Integer MAX_RETRIES = 10;
+    public static final Integer UPDATE_COUNT = 10;
 
     private final int port;
     private final int idx;
@@ -52,7 +51,7 @@ public class HttpPostRunnable implements Runnable {
     }
 
     private void executeRequest(HttpPost post, int retryIdx) throws IOException, InterruptedException {
-        if (retryIdx > MAX_RETRIES) {
+        if (retryIdx > UPDATE_COUNT) {
             return;
         }
 
