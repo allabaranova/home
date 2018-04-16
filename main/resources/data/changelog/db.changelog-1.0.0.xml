@@ -14,7 +14,7 @@
             <column name="question" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="version" type="int(10)" defaultValue="0">
+            <column name="version" type="bigint(20)" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
             <column name="update_count" type="bigint(20)">

@@ -61,7 +61,7 @@ public class HttpPostRunnable implements Runnable {
         if (HttpStatus.INTERNAL_SERVER_ERROR.value() == response.getStatusLine().getStatusCode()) {
             System.out.println("Call failed, re-executing request # " + idx + post.getRequestLine());
             Thread.sleep(100);
-            executeRequest(post, retryIdx++);
+            executeRequest(post, ++retryIdx);
         }
     }
 

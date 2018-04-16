@@ -13,6 +13,9 @@ public class QuizQuestion extends GenericEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @Version
+    Long version;
+
     private String question;
 
     @Column(name = "update_count")
