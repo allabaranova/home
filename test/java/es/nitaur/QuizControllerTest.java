@@ -14,7 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -59,6 +58,20 @@ public class QuizControllerTest {
     }
 
     @Test
+    public void quizIsNotSavedWithNotNullId() {
+        long id = 999L;
+        Quiz quiz = new Quiz();
+        quiz.setName("name");
+        quiz.setId(id);
+
+        restTemplate.postForLocation(GET_QUIZZES_API, quiz);
+
+        Quiz quizFromDB = restTemplate.getForObject(GET_QUIZ_BY_ID_API + id, Quiz.class);
+
+        assertThat("Quiz must be null", null, is(quizFromDB));
+    }
+
+    @Test
     public void updateQuestionTest() {
         QuizQuestion quizQuestion = new QuizQuestion();
         quizQuestion.setQuestion(QUESTION);
@@ -66,7 +79,7 @@ public class QuizControllerTest {
 
         restTemplate.postForLocation(UPDATE_QUESTION_BY_FIXED_ID_API, quizQuestion);
 
-        QuizQuestion  question = restTemplate.getForObject(GET_QUESTION_BY_ID_API + 1, QuizQuestion.class);
+        QuizQuestion question = restTemplate.getForObject(GET_QUESTION_BY_ID_API + 1, QuizQuestion.class);
         assertThat("Question text is " + QUESTION, QUESTION, is(question.getQuestion()));
     }
 
@@ -74,7 +87,7 @@ public class QuizControllerTest {
     public void getAllQuestionsTest() {
         ResponseEntity<List<QuizQuestion>> exchange = restTemplate.exchange(GET_ALL_QUESTIONS_API, HttpMethod.GET, null, new ParameterizedTypeReference<List<QuizQuestion>>() {});
 
-        List<QuizQuestion>  questions = exchange.getBody();
+        List<QuizQuestion> questions = exchange.getBody();
         assertThat("There are 4 questions", 4, is(questions.size()));
     }
 
@@ -85,7 +98,7 @@ public class QuizControllerTest {
 
         restTemplate.postForLocation(ANSWER_QUESTION_BY_FIXED_ID_API, Lists.newArrayList(answer));
 
-        QuizQuestion  question = restTemplate.getForObject(GET_QUESTION_BY_ID_API + 1, QuizQuestion.class);
+        QuizQuestion question = restTemplate.getForObject(GET_QUESTION_BY_ID_API + 1, QuizQuestion.class);
         assertThat("There are updated answers", ANSWER, is(question.getAnswers().get(0).getAnswer()));
     }
 
