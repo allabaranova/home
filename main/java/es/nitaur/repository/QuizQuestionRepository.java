@@ -13,9 +13,6 @@ import java.util.List;
 @Repository
 public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, Long> {
 
-    @Lock(LockModeType.OPTIMISTIC)
-    QuizQuestion findOne(Long id);
-
     @Query("SELECT qq from QuizQuestion qq where qq.section.id = :id")
     List<QuizQuestion> findAllBySectionId(@Param("id") Long filterId);
 }
