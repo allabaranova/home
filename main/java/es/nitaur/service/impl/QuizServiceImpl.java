@@ -1,8 +1,13 @@
-package es.nitaur;
+package es.nitaur.service.impl;
 
 import com.google.common.collect.Lists;
+import es.nitaur.domain.Quiz;
+import es.nitaur.domain.QuizAnswer;
+import es.nitaur.domain.QuizQuestion;
+import es.nitaur.domain.QuizSection;
 import es.nitaur.repository.QuizQuestionRepository;
 import es.nitaur.repository.QuizRepository;
+import es.nitaur.service.QuizService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

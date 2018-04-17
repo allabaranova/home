@@ -1,6 +1,7 @@
 package es.nitaur;
 
 import com.google.common.collect.Lists;
+import es.nitaur.domain.QuizQuestion;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

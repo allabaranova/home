@@ -1,5 +1,9 @@
-package es.nitaur;
+package es.nitaur.controller;
 
+import es.nitaur.service.QuizService;
+import es.nitaur.domain.Quiz;
+import es.nitaur.domain.QuizAnswer;
+import es.nitaur.domain.QuizQuestion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

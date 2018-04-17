@@ -1,5 +1,8 @@
-package es.nitaur;
+package es.nitaur.service;
 
+import es.nitaur.domain.Quiz;
+import es.nitaur.domain.QuizAnswer;
+import es.nitaur.domain.QuizQuestion;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
