@@ -20,8 +20,8 @@ import java.util.List;
 
 @Service
 public class QuizServiceImpl implements QuizService {
-
     private static final Logger logger = LoggerFactory.getLogger(QuizServiceImpl.class);
+
     @Autowired
     private QuizQuestionRepository quizQuestionRepository;
     @Autowired

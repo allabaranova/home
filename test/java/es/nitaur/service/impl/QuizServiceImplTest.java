@@ -1,6 +1,8 @@
 package es.nitaur.service.impl;
 
 import es.nitaur.domain.Quiz;
+import es.nitaur.domain.QuizQuestion;
+import es.nitaur.domain.QuizSection;
 import es.nitaur.service.QuizService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static es.nitaur.builder.QuizAnswerBuilder.aQuizAnswer;
-import static es.nitaur.builder.QuizBuilder.aQuiz;
-import static es.nitaur.builder.QuizQuestionBuilder.aQuizQuestion;
-import static es.nitaur.builder.QuizSectionBuilder.aQuizSection;
+import static es.nitaur.utils.PrepareDomainObjects.ANSWER;
+import static es.nitaur.utils.PrepareDomainObjects.prepareQuiz;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,13 +22,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class QuizServiceImplTest {
     private static final String GET_QUIZZES_API = "/api/quiz";
 
-    private static final String QUESTION = "Question";
-    private static final String ANSWER = "Answer";
-    private static final String QUIZ = "Quiz";
-
     @Autowired
     private QuizService quizService;
-
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -36,31 +31,21 @@ public class QuizServiceImplTest {
     public void createQuiz() {
         Quiz quiz = prepareQuiz();
 
-        restTemplate.postForLocation(GET_QUIZZES_API, quiz);
+        Quiz quizFromDB = restTemplate.postForObject(GET_QUIZZES_API, quiz, Quiz.class);
 
-        Quiz quizFromDB = quizService.findOne(2L);
+        assertThat("Quiz must be created", null, not(quizFromDB));
         assertThat("Created quiz id is not null", null, not(quizFromDB.getId()));
 
-        assertThat(quizFromDB.getSections().get(0).getQuiz(), is(quizFromDB));
-        assertThat(quizFromDB.getSections().get(0).getQuizQuestions().get(0).getSection(), is(quizFromDB.getSections().get(0)));
+        Quiz quizFromDBWithAllRelations = quizService.findOne(quizFromDB.getId());
 
-        assertThat(quizFromDB.getSections().get(0).getQuizQuestions().get(0).getAnswers().get(0).getAnswer(), is(ANSWER));
+        QuizSection quizSection = quizFromDBWithAllRelations.getSections().get(0);
+        QuizQuestion quizQuestion = quizSection.getQuizQuestions().get(0);
+
+        assertThat(quizSection.getQuiz(), is(quizFromDBWithAllRelations));
+        assertThat(quizQuestion.getSection(), is(quizSection));
+
+        assertThat(quizQuestion.getAnswers().get(0).getAnswer(), is(ANSWER));
+
+        quizService.delete(quizFromDBWithAllRelations.getId());
     }
-
-    private Quiz prepareQuiz() {
-        Quiz quiz = aQuiz()
-                .withName(QUIZ)
-                .withSection(
-                        aQuizSection()
-                                .withQuizQuestion(
-                                        aQuizQuestion()
-                                                .withQuestion(QUESTION)
-                                                .withAnswer(
-                                                        aQuizAnswer()
-                                                                .withAnswer(ANSWER))))
-                .build();
-        return quiz;
-    }
-
-
 }

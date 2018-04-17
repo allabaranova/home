@@ -16,8 +16,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+import static es.nitaur.utils.PrepareDomainObjects.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -27,10 +30,9 @@ public class QuizControllerTest {
     private static final String ANSWER_QUESTION_BY_FIXED_ID_API = "/api/quiz/answerQuestion/1";
     private static final String GET_ALL_QUESTIONS_API = "/api/quiz/allQuestions";
     private static final String GET_QUESTION_BY_ID_API = "/api/quiz/getQuestion/";
+    private static final String DELETE_QUIZ_BY_ID_API = "/api/quiz/delete/";
     private static final String GET_QUIZ_BY_ID_API = "/api/quiz/";
     private static final String GET_QUIZZES_API = "/api/quiz";
-    private static final String QUESTION = "Question";
-    private static final String ANSWER = "Answer";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -72,10 +74,40 @@ public class QuizControllerTest {
     }
 
     @Test
+    public void quizIsSaved() {
+        Quiz quiz = prepareQuiz();
+
+        Quiz quizFromDB = restTemplate.postForObject(GET_QUIZZES_API, quiz, Quiz.class);
+
+        assertThat("Quiz must be NOT null", null, not(quizFromDB));
+        assertThat("Quiz ID must be NOT null", null, not(quizFromDB.getId()));
+
+        Quiz quizGettedByID = restTemplate.getForObject(GET_QUIZ_BY_ID_API + quizFromDB.getId(), Quiz.class);
+
+        assertEquals(quizFromDB, quizGettedByID);
+
+        restTemplate.delete(DELETE_QUIZ_BY_ID_API + quizFromDB.getId());
+    }
+
+    @Test
+    public void quizIsDeleted() {
+        Quiz quiz = prepareQuiz();
+
+        Quiz quizFromDB = restTemplate.postForObject(GET_QUIZZES_API, quiz, Quiz.class);
+
+        assertThat("Quiz must be NOT null", null, not(quizFromDB));
+        assertThat("Quiz ID must be NOT null", null, not(quizFromDB.getId()));
+
+        restTemplate.delete(DELETE_QUIZ_BY_ID_API + quizFromDB.getId());
+
+        Quiz quizAfterDelete = restTemplate.getForObject(GET_QUIZ_BY_ID_API + quizFromDB.getId(), Quiz.class);
+
+        assertThat("Quiz must be null", null, is(quizAfterDelete));
+    }
+
+    @Test
     public void updateQuestionTest() {
-        QuizQuestion quizQuestion = new QuizQuestion();
-        quizQuestion.setQuestion(QUESTION);
-        quizQuestion.setAnswers(Lists.newArrayList());
+        QuizQuestion quizQuestion = prepareQuizQuestion();
 
         restTemplate.postForLocation(UPDATE_QUESTION_BY_FIXED_ID_API, quizQuestion);
 
@@ -101,5 +133,4 @@ public class QuizControllerTest {
         QuizQuestion question = restTemplate.getForObject(GET_QUESTION_BY_ID_API + 1, QuizQuestion.class);
         assertThat("There are updated answers", ANSWER, is(question.getAnswers().get(0).getAnswer()));
     }
-
 }

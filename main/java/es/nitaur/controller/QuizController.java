@@ -1,9 +1,9 @@
 package es.nitaur.controller;
 
-import es.nitaur.service.QuizService;
 import es.nitaur.domain.Quiz;
 import es.nitaur.domain.QuizAnswer;
 import es.nitaur.domain.QuizQuestion;
+import es.nitaur.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +50,7 @@ public class QuizController {
     }
 
     @RequestMapping(value = "/api/quiz/delete/{id}",
-            method = RequestMethod.GET)
+            method = RequestMethod.DELETE)
     public ResponseEntity<Quiz> deleteQuiz(@PathVariable("id") final Long id) {
         quizService.delete(id);
         return new ResponseEntity<Quiz>(HttpStatus.NO_CONTENT);
